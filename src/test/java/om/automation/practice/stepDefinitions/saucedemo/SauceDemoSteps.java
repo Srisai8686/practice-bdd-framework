@@ -1,8 +1,15 @@
 package om.automation.practice.stepDefinitions.saucedemo;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.automation.practice.base.DriverFactory;
 import com.automation.practice.pages.saucedemo.ProductsPage;
@@ -18,7 +25,8 @@ public class SauceDemoSteps {
     WebDriver driver;
     SauceLoginPage sauceLoginPage;
     ProductsPage productsPage;
-    
+    private static final Logger log = LoggerFactory.getLogger(SauceDemoSteps.class);
+
     
 
     public SauceDemoSteps() {
@@ -45,6 +53,15 @@ public class SauceDemoSteps {
         sauceLoginPage.login(username, password);
     }
     
+    @Given("user is logged in to Sauce Demo")
+    public void user_is_logged_in_to_sauce_demo() {
+        sauceLoginPage.openSauceApp(ConfigReader.get("sauceUrl"));
+        sauceLoginPage.login(
+            ConfigReader.get("sauceUsername"),
+            ConfigReader.get("saucePassword")
+        );
+        assertTrue(productsPage.isProductsPageDisplayed());
+    }
     
     @Then("user should land on Products page")
     public void user_should_land_on_products_page() {
@@ -56,5 +73,60 @@ public class SauceDemoSteps {
         assertTrue(sauceLoginPage.isErrorMessageDisplayed());
     }
     
+    @When("user sorts products by {string}")
+    public void user_sorts_products_by(String sortOption) {
+        productsPage.sortProductsBy(sortOption);
+    }
+    
+    @Then("products should be sorted correctly by {string}")
+    public void products_should_be_sorted_correctly_by(String sortOption) {
+
+        log.info("=======================================");
+        log.info("Sorting verification for: {}", sortOption);
+
+        if (sortOption.contains("Name")) {
+
+            List<String> actualNames = productsPage.getAllProductNames();
+            log.info("Actual Names (UI order): {}", actualNames);
+
+            List<String> expectedNames = new ArrayList<>(actualNames);
+
+            if (sortOption.equals("Name (A to Z)")) {
+                Collections.sort(expectedNames);
+            } else if (sortOption.equals("Name (Z to A)")) {
+                Collections.sort(expectedNames, Collections.reverseOrder());
+            }
+
+            log.info("Expected Names (Java sorted): {}", expectedNames);
+
+            assertEquals(expectedNames, actualNames);
+            log.info("Result: UI names are sorted correctly ✅");
+
+        } else if (sortOption.contains("Price")) {
+
+            List<Double> actualPrices = productsPage.getAllProductPrices();
+            log.info("Actual Prices (UI order): {}", actualPrices);
+
+            List<Double> expectedPrices = new ArrayList<>(actualPrices);
+
+            if (sortOption.equals("Price (low to high)")) {
+                Collections.sort(expectedPrices);
+            } else if (sortOption.equals("Price (high to low)")) {
+                Collections.sort(expectedPrices, Collections.reverseOrder());
+            }
+
+            log.info("Expected Prices (Java sorted): {}", expectedPrices);
+
+            assertEquals(expectedPrices, actualPrices);
+            log.info("Result: UI prices are sorted correctly ✅");
+        }
+
+        log.info("=======================================\n");
+    }
+
+    
+
+    
 }
+
 

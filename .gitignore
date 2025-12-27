@@ -1,1 +1,18 @@
+# Eclipse workspace metadata
+/.metadata/
+
+# Eclipse project files
+/.classpath
+/.project
+/.settings/
+
+# Maven
 /target/
+
+# Logs
+*.log
+
+# Test reports & screenshots
+/reports/
+/test-output/
+/screenshots/
