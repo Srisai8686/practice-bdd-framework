@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.automation.practice.base.DriverFactory;
+import com.automation.practice.pages.saucedemo.CartPage;
+import com.automation.practice.pages.saucedemo.CheckoutPage;
 import com.automation.practice.pages.saucedemo.ProductsPage;
 import com.automation.practice.pages.saucedemo.SauceLoginPage;
 import com.automation.practice.utils.ConfigReader;
@@ -23,8 +25,10 @@ import io.cucumber.java.en.When;
 public class SauceDemoSteps {
 
     WebDriver driver;
-    SauceLoginPage sauceLoginPage;
-    ProductsPage productsPage;
+    private SauceLoginPage sauceLoginPage;
+    private ProductsPage productsPage;
+    private CartPage cartPage;
+    private CheckoutPage checkoutPage;
     private static final Logger log = LoggerFactory.getLogger(SauceDemoSteps.class);
 
     
@@ -33,6 +37,8 @@ public class SauceDemoSteps {
         driver = DriverFactory.getDriver();
         sauceLoginPage = new SauceLoginPage(driver);
         productsPage = new ProductsPage(driver);
+        cartPage = new CartPage(driver);
+        checkoutPage = new CheckoutPage(driver);
     }
 
     @Given("I open Sauce Demo application")
@@ -124,7 +130,30 @@ public class SauceDemoSteps {
         log.info("=======================================\n");
     }
 
+    @When("user adds a product {string} to the cart")
+    public void user_adds_a_product_to_the_cart(String productName) {
+		
+      productsPage.addProductToCart(productName);
+      productsPage.goToCart();
+	}
     
+    @When("user proceeds to checkout")
+    public void user_proceeds_to_checkout() throws InterruptedException {
+    	cartPage.clickCheckout();
+    	checkoutPage.enterCheckoutInformation("John", "Doe", "12345");
+    	checkoutPage.clickContinue();
+    	Thread.sleep(5000); // Adding a short wait to ensure the page loads before clicking Finish
+    	checkoutPage.clickFinish();
+    }
+    
+    @Then("order should be placed successfully")
+    public void order_should_be_placed_successfully() {
+    	assertTrue(checkoutPage.isOrderSuccessMessageDisplayed());
+    	
+    	String successMessage = checkoutPage.getOrderSuccessMessageText();
+    	System.out.println("Order Success Message: " + successMessage);
+    	assertEquals("Thank you for your order!", successMessage);
+    }
 
     
 }

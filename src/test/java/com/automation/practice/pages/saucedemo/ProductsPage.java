@@ -9,16 +9,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.automation.practice.pages.BasePage;
 
 public class ProductsPage extends BasePage {
+	
+	private static final Logger log = LoggerFactory.getLogger(ProductsPage.class);
 
     private By productsTitle = By.className("title");
     private By productItems = By.className("inventory_item");
     private By sortDropdown = By.className("product_sort_container");
     private By productNames = By.className("inventory_item_name");
     private By productPrices = By.className("inventory_item_price");
+    private By addToCartButtons = By.xpath("//button[contains(@id,'add-to-cart')]");
+    private By cartIcon = By.className("shopping_cart_link");
 
     public ProductsPage(WebDriver driver) {
         super(driver);
@@ -54,6 +60,31 @@ public class ProductsPage extends BasePage {
         }
         return prices;
     }
+    
+    public void addProductToCart(String productName) {
+    	 log.info("Attempting to add product to cart: {}", productName);
+        List<WebElement> inventoryItems = driver.findElements(productItems);
+        log.info("Total products found on page: {}", inventoryItems.size());
+        boolean productFound = false;
+        for (WebElement item : inventoryItems) {
+			String name = item.findElement(productNames).getText();
+			 log.info("Checking product: {}", name);
+			if (name.equals(productName)) {
+				 log.info("Match found. Clicking Add to Cart for product: {}", name);
+				item.findElement(addToCartButtons).click();
+				  log.info("Product added to cart successfully: {}", name);
+				  productFound = true;
+				break;
+			}
+		}
+        if (!productFound) {
+            log.error("Product NOT found on page: {}", productName);
+        }
+    }
+    
+    public void goToCart() {
+		driver.findElement(cartIcon).click();
+	}
 
 }
 
