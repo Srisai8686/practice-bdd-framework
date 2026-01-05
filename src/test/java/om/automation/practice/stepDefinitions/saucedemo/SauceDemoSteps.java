@@ -86,48 +86,10 @@ public class SauceDemoSteps {
     
     @Then("products should be sorted correctly by {string}")
     public void products_should_be_sorted_correctly_by(String sortOption) {
-
-        log.info("=======================================");
-        log.info("Sorting verification for: {}", sortOption);
-
-        if (sortOption.contains("Name")) {
-
-            List<String> actualNames = productsPage.getAllProductNames();
-            log.info("Actual Names (UI order): {}", actualNames);
-
-            List<String> expectedNames = new ArrayList<>(actualNames);
-
-            if (sortOption.equals("Name (A to Z)")) {
-                Collections.sort(expectedNames);
-            } else if (sortOption.equals("Name (Z to A)")) {
-                Collections.sort(expectedNames, Collections.reverseOrder());
-            }
-
-            log.info("Expected Names (Java sorted): {}", expectedNames);
-
-            assertEquals(expectedNames, actualNames);
-            log.info("Result: UI names are sorted correctly ✅");
-
-        } else if (sortOption.contains("Price")) {
-
-            List<Double> actualPrices = productsPage.getAllProductPrices();
-            log.info("Actual Prices (UI order): {}", actualPrices);
-
-            List<Double> expectedPrices = new ArrayList<>(actualPrices);
-
-            if (sortOption.equals("Price (low to high)")) {
-                Collections.sort(expectedPrices);
-            } else if (sortOption.equals("Price (high to low)")) {
-                Collections.sort(expectedPrices, Collections.reverseOrder());
-            }
-
-            log.info("Expected Prices (Java sorted): {}", expectedPrices);
-
-            assertEquals(expectedPrices, actualPrices);
-            log.info("Result: UI prices are sorted correctly ✅");
-        }
-
-        log.info("=======================================\n");
+        assertTrue(
+            "Products are NOT sorted correctly for option: " + sortOption,
+            productsPage.isProductsSortedCorrectly(sortOption)
+        );
     }
 
     @When("user adds a product {string} to the cart")
