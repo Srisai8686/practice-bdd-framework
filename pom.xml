@@ -61,6 +61,17 @@
                 <target>11</target>
             </configuration>
         </plugin>
+        <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.2.5</version>
+    <configuration>
+        <includes>
+            <include>**/*Runner.java</include>
+        </includes>
+    </configuration>
+</plugin>
+
     </plugins>
 </build>
 
