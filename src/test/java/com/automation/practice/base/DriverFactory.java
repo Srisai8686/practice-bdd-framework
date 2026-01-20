@@ -15,34 +15,35 @@ public class DriverFactory {
 
     public static void initDriver(String browser) {
 
+        if (browser == null) {
+            browser = "chrome";
+        }
+
         WebDriver webDriver;
 
         if (browser.equalsIgnoreCase("chrome")) {
 
             ChromeOptions options = new ChromeOptions();
 
-            // 🔥 MOST IMPORTANT: Incognito mode
+            // ✅ Incognito (avoids popups & saved state)
             options.addArguments("--incognito");
 
-            // 🔐 Disable password manager services
+            // ✅ Disable password manager & services
             Map<String, Object> prefs = new HashMap<>();
             prefs.put("credentials_enable_service", false);
             prefs.put("profile.password_manager_enabled", false);
-
             options.setExperimentalOption("prefs", prefs);
 
-            // 🚫 Disable browser UI interruptions
+            // ✅ Disable browser interruptions
             options.addArguments("--disable-notifications");
             options.addArguments("--disable-infobars");
             options.addArguments("--disable-save-password-bubble");
 
-            // 🚫 Disable Chrome password breach & onboarding
-            options.addArguments("--disable-features=PasswordLeakDetection");
-            options.addArguments("--disable-features=PasswordManagerOnboarding");
-
-            // 🧹 Stability flags
+            // ✅ Stability flags
             options.addArguments("--no-first-run");
             options.addArguments("--no-default-browser-check");
+            options.addArguments("--disable-features=PasswordLeakDetection");
+            options.addArguments("--disable-features=PasswordManagerOnboarding");
 
             WebDriverManager.chromedriver().setup();
             webDriver = new ChromeDriver(options);
@@ -52,7 +53,13 @@ public class DriverFactory {
         }
 
         webDriver.manage().window().maximize();
+
+        // 🔥 Thread-safe driver set
         driver.set(webDriver);
+
+        System.out.println(
+            "Driver started for thread: " + Thread.currentThread().getId()
+        );
     }
 
     public static WebDriver getDriver() {

@@ -1,7 +1,8 @@
-package om.automation.practice.stepDefinitions.saucedemo;
+package com.automation.practice.stepDefinitions.saucedemo;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +18,7 @@ import com.automation.practice.pages.saucedemo.CheckoutPage;
 import com.automation.practice.pages.saucedemo.ProductsPage;
 import com.automation.practice.pages.saucedemo.SauceLoginPage;
 import com.automation.practice.utils.ConfigReader;
+import com.automation.practice.utils.ScreenshotUtils;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -86,10 +88,11 @@ public class SauceDemoSteps {
     
     @Then("products should be sorted correctly by {string}")
     public void products_should_be_sorted_correctly_by(String sortOption) {
-        assertTrue(
-            "Products are NOT sorted correctly for option: " + sortOption,
-            productsPage.isProductsSortedCorrectly(sortOption)
-        );
+    	assertTrue(
+    		    productsPage.isProductsSortedCorrectly(sortOption),
+    		    "Products are NOT sorted correctly for option: " + sortOption
+    		);
+
     }
 
     @When("user adds a product {string} to the cart")
@@ -104,7 +107,7 @@ public class SauceDemoSteps {
     	cartPage.clickCheckout();
     	checkoutPage.enterCheckoutInformation("John", "Doe", "12345");
     	checkoutPage.clickContinue();
-    	Thread.sleep(5000); // Adding a short wait to ensure the page loads before clicking Finish
+    	//Thread.sleep(5000); // Adding a short wait to ensure the page loads before clicking Finish
     	checkoutPage.clickFinish();
     }
     
@@ -115,6 +118,73 @@ public class SauceDemoSteps {
     	String successMessage = checkoutPage.getOrderSuccessMessageText();
     	System.out.println("Order Success Message: " + successMessage);
     	assertEquals("Thank you for your order!", successMessage);
+    }
+
+    @When("user adds product {string} to cart")
+    public void user_adds_product_to_cart_alias(String productName) {
+        user_adds_a_product_to_the_cart(productName);
+    }
+
+    @When("user completes checkout")
+    public void user_completes_checkout() throws InterruptedException {
+        user_proceeds_to_checkout();
+    }
+
+    @Then("purchase confirmation message should be displayed")
+    public void purchase_confirmation_message_should_be_displayed() {
+        order_should_be_placed_successfully();
+        ScreenshotUtils.takeScreenshot(
+        	    "order_success_" + Thread.currentThread().getId()
+        	);
+    }
+
+    @When("user adds the following products to cart")
+    public void user_adds_the_following_products_to_cart(io.cucumber.datatable.DataTable dataTable) {
+
+        List<String> products = dataTable.asList();
+
+        for (String product : products) {
+            productsPage.addProductToCart(product);
+        }
+
+        productsPage.goToCart();
+    }
+
+    @When("user adds all products to cart")
+    public void user_adds_all_products_to_cart() {
+
+        productsPage.addAllProductsToCart();
+        productsPage.goToCart();
+    }
+    
+    @Then("all products should be added to the cart")
+    public void all_products_should_be_added_to_cart() {
+        int expectedCount = productsPage.getAllProductNames().size();
+        int actualCount = productsPage.getCartItemCount();
+        System.out.println("Expected Cart Count: " + expectedCount);
+        System.out.println("Actual Cart Count: " + actualCount);
+
+        assertEquals(actualCount, expectedCount, "Cart count mismatch");
+        ScreenshotUtils.takeScreenshot(
+        	    "all_products_added_" + Thread.currentThread().getId()
+        	);
+    }
+
+    @When("user navigates to products page")
+    public void user_navigates_to_products_page() {
+        productsPage.returnToProductsPage();
+    }
+    
+    @Then("cart badge count should be {string}")
+    public void cart_badge_count_should_be(String expectedCount) {
+
+        int actualCount = productsPage.getCartItemCount();
+        int expected = Integer.parseInt(expectedCount);
+
+        System.out.println("Expected cart count: " + expected);
+        System.out.println("Actual cart count: " + actualCount);
+
+        assertEquals(expected, actualCount);
     }
 
     

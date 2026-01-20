@@ -25,6 +25,10 @@ public class ProductsPage extends BasePage {
     private By productPrices = By.className("inventory_item_price");
     private By addToCartButtons = By.xpath(".//button[contains(@id,'add-to-cart')]");
     private By cartIcon = By.className("shopping_cart_link");
+    private By cartBadge = By.className("shopping_cart_badge");
+    private By backToProductsBtn = By.id("back-to-products");
+    private By continueShoppingBtn = By.id("continue-shopping");
+    
 
     public ProductsPage(WebDriver driver) {
         super(driver);
@@ -127,6 +131,27 @@ public class ProductsPage extends BasePage {
     }
 
     public void goToCart() {
-        driver.findElement(cartIcon).click();
+    	 wait.until(ExpectedConditions.elementToBeClickable(cartIcon)).click();
     }
+
+    public void addAllProductsToCart() {
+    	log.info("Adding all products to cart");
+
+        List<WebElement> inventoryItems = driver.findElements(productItems);
+
+        for (WebElement item : inventoryItems) {
+            item.findElement(addToCartButtons).click();
+        }
+    }
+    
+    public int getCartItemCount() {
+        return Integer.parseInt(
+            wait.until(ExpectedConditions.visibilityOfElementLocated(cartBadge)).getText()
+        );
+    }
+    
+	public void returnToProductsPage() {
+		wait.until(ExpectedConditions.elementToBeClickable(continueShoppingBtn)).click();
+	}
+
 }

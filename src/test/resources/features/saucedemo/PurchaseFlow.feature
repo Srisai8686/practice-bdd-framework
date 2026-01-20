@@ -18,5 +18,6 @@ Scenario: Checkout with multiple products
 Scenario: Checkout with all products
   Given user is logged in to Sauce Demo
   When user adds all products to cart
+  Then all products should be added to the cart
   And user completes checkout
   Then purchase confirmation message should be displayed

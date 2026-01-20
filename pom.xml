@@ -4,12 +4,13 @@
   <artifactId>practice-bdd-framework</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <dependencies>
+
     <!-- Selenium -->
     <dependency>
-    <groupId>org.seleniumhq.selenium</groupId>
-    <artifactId>selenium-java</artifactId>
-    <version>4.27.0</version>
-</dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>4.27.0</version>
+    </dependency>
 
     <!-- Cucumber -->
     <dependency>
@@ -17,35 +18,38 @@
         <artifactId>cucumber-java</artifactId>
         <version>7.18.1</version>
     </dependency>
+
     <dependency>
         <groupId>io.cucumber</groupId>
-        <artifactId>cucumber-junit</artifactId>
+        <artifactId>cucumber-testng</artifactId>
         <version>7.18.1</version>
         <scope>test</scope>
     </dependency>
 
-    <!-- JUnit -->
+    <!-- TestNG -->
     <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.13.2</version>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.9.0</version>
         <scope>test</scope>
     </dependency>
-    
-    <!-- SLF4J + Logback -->
-<dependency>
-    <groupId>ch.qos.logback</groupId>
-    <artifactId>logback-classic</artifactId>
-    <version>1.4.14</version>
-</dependency>
 
+    <!-- Logging -->
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.4.14</version>
+    </dependency>
 
     <!-- WebDriver Manager -->
-<dependency>
-    <groupId>io.github.bonigarcia</groupId>
-    <artifactId>webdrivermanager</artifactId>
-    <version>5.8.0</version>
-</dependency></dependencies>
+    <dependency>
+        <groupId>io.github.bonigarcia</groupId>
+        <artifactId>webdrivermanager</artifactId>
+        <version>5.8.0</version>
+    </dependency>
+
+</dependencies>
+
 <build>
     <plugins>
         <plugin>
