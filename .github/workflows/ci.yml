@@ -30,3 +30,11 @@ jobs:
 
       - name: Run tests
         run: mvn clean test
+
+      # ⭐ THIS IS THE IMPORTANT PART ⭐
+      - name: Upload Cucumber Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: reports
