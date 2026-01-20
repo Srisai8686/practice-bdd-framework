@@ -25,21 +25,32 @@ public class DriverFactory {
 
             ChromeOptions options = new ChromeOptions();
 
-            // ✅ Incognito (avoids popups & saved state)
+            // Detect CI environment (GitHub Actions sets CI=true)
+            boolean isCI = "true".equalsIgnoreCase(System.getenv("CI"));
+
+            if (isCI) {
+                // REQUIRED FOR CI (Linux)
+                options.addArguments("--headless=new"); // or "--headless"
+                options.addArguments("--no-sandbox");
+                options.addArguments("--disable-dev-shm-usage");
+                options.addArguments("--disable-gpu");
+            }
+
+            // Incognito (avoids saved state & popups)
             options.addArguments("--incognito");
 
-            // ✅ Disable password manager & services
+            // Disable password manager
             Map<String, Object> prefs = new HashMap<>();
             prefs.put("credentials_enable_service", false);
             prefs.put("profile.password_manager_enabled", false);
             options.setExperimentalOption("prefs", prefs);
 
-            // ✅ Disable browser interruptions
+            // Disable browser interruptions
             options.addArguments("--disable-notifications");
             options.addArguments("--disable-infobars");
             options.addArguments("--disable-save-password-bubble");
 
-            // ✅ Stability flags
+            //Stability flags
             options.addArguments("--no-first-run");
             options.addArguments("--no-default-browser-check");
             options.addArguments("--disable-features=PasswordLeakDetection");
@@ -54,7 +65,7 @@ public class DriverFactory {
 
         webDriver.manage().window().maximize();
 
-        // 🔥 Thread-safe driver set
+        //Thread-safe driver
         driver.set(webDriver);
 
         System.out.println(
